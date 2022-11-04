@@ -47,6 +47,7 @@ __pycache__
 mlflowmysql/data/*
 !mlflowmysql/data/.keep
 # minio settings
-mlflowminio/*
+mlflowminio/.minio.sys/*
+mlflowminio/mlflow/*
 !mlflowminio/mlflow/.keep
 
