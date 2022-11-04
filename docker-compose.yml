@@ -1,0 +1,66 @@
+version: '3'
+services:
+  mlflowclient:
+    build:
+      context: ./mlflowclient
+    container_name: mlflowclient
+    volumes:
+      - ./mlflowclient/src:/data
+    depends_on:
+      - mlflowserver
+      - mlflowminio
+    tty: true
+    environment:
+      - MLFLOW_S3_ENDPOINT_URL=http://mlflowminio:9000
+      - AWS_ACCESS_KEY_ID=mlflow
+      - AWS_SECRET_ACCESS_KEY=mlflowmlflow
+
+  mlflowserver:
+    build:
+      context: ./mlflowserver
+    image: mlflow
+    container_name: mlflowserver
+    environment:
+      - MLFLOW_S3_ENDPOINT_URL=http://mlflowminio:9000
+      - AWS_ACCESS_KEY_ID=mlflow
+      - AWS_SECRET_ACCESS_KEY=mlflowmlflow
+    command: mlflow server --backend-store-uri 'mysql://mlflow:mlflow@mlflowmysql:3306/mlflow' --default-artifact-root 's3://mlflow/' --host 0.0.0.0 --port 5000
+    ports:
+      - 5000:5000
+    depends_on:
+      - mlflowmysql
+      - mlflowminio
+
+  mlflowmysql:
+    image: mysql:5.7
+    container_name: mlflowmysql
+    command: mysqld --user=mysql
+    ports:
+      - 3306:3306
+    volumes:
+      - ./mlflowmysql/data:/var/lib/mysql
+    environment:
+      - DATABASE_TYPE=mysql
+      - MYSQL_DATABASE=mlflow
+      - MYSQL_ROOT_PASSWORD=mlflow
+      - MYSQL_USER=mlflow
+      - MYSQL_PASSWORD=mlflow
+      - MYSQL_HOST=mlflowmysql
+      - MYSQL_PORT=3306
+
+  mlflowminio:
+    image: minio/minio:latest
+    container_name: mlflowminio
+    command: server /data --console-address ":9001"
+    ports:
+      - 9001:9001
+      - 9000:9000
+    volumes:
+      - ./mlflowminio:/data
+    environment:
+      - MINIO_HOST=mlflowminio
+      - MINIO_PORT=9000
+      - STORAGE_TYPE=minio
+      - MINIO_BUCKET=mlflow
+      - MINIO_ROOT_USER=mlflow
+      - MINIO_ROOT_PASSWORD=mlflowmlflow
