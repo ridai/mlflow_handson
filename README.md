@@ -33,15 +33,17 @@ MLflowを立ち上げ、実際のUI画面を確認し、「実験」と呼ばれ
 $docker-compose build
 $docker-compose up
 ```
+
 コンテナの構成は以下の図の通り。
+
 <img width="500" alt="mlflow_handson_arch" src="https://user-images.githubusercontent.com/2268153/199867105-b551b2b6-b689-43d3-bdf0-55c4c3429e26.png">
 
 
-3. ブラウザで`localhost:5000`にアクセスすると、以下のMLflowのUI画面が見えるはず。
+2. ブラウザで`localhost:5000`にアクセスすると、以下のMLflowのUI画面が見えるはず。
 
 <img width="500" alt="mlflow_00" src="https://user-images.githubusercontent.com/2268153/199773431-ab773f81-d596-4745-a048-f2f5e3e54305.png">
 
-4. mlflowmyql コンテナに入り、table情報を見ると以下のようなtableが作成されていることが確認できる。
+3. mlflowmyql コンテナに入り、table情報を見ると以下のようなtableが作成されていることが確認できる。
 
 ```
 bash-4.2# mysql -u mlflow -p
